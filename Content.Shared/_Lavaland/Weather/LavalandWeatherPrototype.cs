@@ -6,6 +6,7 @@
 using Content.Shared.Damage;
 using Content.Shared.FixedPoint;
 using Content.Shared.Weather;
+using Robust.Shared.Audio;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared._Lavaland.Weather;
@@ -29,6 +30,17 @@ public sealed class LavalandWeatherPrototype : IPrototype
 
     [DataField]
     public string PopupEndMessage = "The wind is going out.";
+
+    // Den addition for siren sounds
+    [DataField]
+    public SoundSpecifier StormSirenEarly = new SoundPathSpecifier("/Audio/_Lavaland/DenSiren/storm_warning_early.wav");
+
+    [DataField]
+    public SoundSpecifier StormSirenStart = new SoundPathSpecifier("/Audio/_Lavaland/DenSiren/storm_warning_start.wav");
+
+    [DataField]
+    public SoundSpecifier StormSirenEnd = new SoundPathSpecifier("/Audio/_Lavaland/DenSiren/storm_warning_end.wav");
+    // End Den edit
 
     /// <summary>
     /// Amount of temperature to apply every tick.

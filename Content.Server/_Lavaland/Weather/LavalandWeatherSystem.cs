@@ -8,10 +8,13 @@ using System.Threading.Tasks;
 using Content.Server._Lavaland.Procedural.Components;
 using Content.Server.Temperature.Systems;
 using Content.Server.Weather;
+using Content.Shared.Audio;
 using Content.Shared._Lavaland.Weather;
 using Content.Shared.Damage;
 using Content.Shared.Humanoid;
 using Content.Shared.Popups;
+using Robust.Shared.Audio;
+using Robust.Shared.Audio.Systems;
 using Robust.Shared.CPUJob.JobQueues;
 using Robust.Shared.CPUJob.JobQueues.Queues;
 using Robust.Shared.Prototypes;
@@ -27,6 +30,7 @@ public sealed class LavalandWeatherSystem : EntitySystem
     [Dependency] private readonly IPrototypeManager _proto = default!;
     [Dependency] private readonly TemperatureSystem _temperature = default!;
     [Dependency] private readonly DamageableSystem _damage = default!;
+    [Dependency] private readonly SharedAudioSystem _audio = default!;
 
     private const double LavalandWeatherJobTime = 0.005;
     private readonly JobQueue _lavalandWeatherJobQueue = new(LavalandWeatherJobTime);
@@ -106,6 +110,9 @@ public sealed class LavalandWeatherSystem : EntitySystem
 
         _weather.SetWeather(Transform(map).MapID, _proto.Index(proto.WeatherType), null);
 
+        // Den edit for sirens
+        _audio.PlayGlobal(proto.StormSirenStart, Filter.Local(), true);
+
         Log.Debug($"Starting dealing weather damage on lavaland map {ToPrettyString(map)}");
         var comp = EnsureComp<LavalandStormedMapComponent>(map);
         comp.CurrentWeather = proto.ID;
@@ -127,6 +134,9 @@ public sealed class LavalandWeatherSystem : EntitySystem
         _weather.SetWeather(Transform(map).MapID, null, null);
         if (!TryComp<LavalandStormedMapComponent>(map, out var comp))
             return;
+
+        // Den edit for sirens
+        _audio.PlayGlobal(proto.StormSirenEnd, Filter.Local(), true);
 
         var popup = _proto.Index(comp.CurrentWeather).PopupEndMessage;
         RemComp<LavalandStormedMapComponent>(map);
