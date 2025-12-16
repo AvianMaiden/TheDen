@@ -17,6 +17,7 @@ using Robust.Shared.Audio;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.CPUJob.JobQueues;
 using Robust.Shared.CPUJob.JobQueues.Queues;
+using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 
@@ -108,10 +109,11 @@ public sealed class LavalandWeatherSystem : EntitySystem
 
         var proto = _proto.Index(weather);
 
-        _weather.SetWeather(Transform(map).MapID, _proto.Index(proto.WeatherType), null);
+		// Den edit for sirens
+		var mapId = Transform(map).MapID;
+        _audio.PlayGlobal(proto.StormSirenStartSound, Filter.BroadcastMap(mapId), true);
 
-        // Den edit for sirens
-        _audio.PlayGlobal(proto.StormSirenStart, Filter.Local(), true);
+        _weather.SetWeather(Transform(map).MapID, _proto.Index(proto.WeatherType), null);
 
         Log.Debug($"Starting dealing weather damage on lavaland map {ToPrettyString(map)}");
         var comp = EnsureComp<LavalandStormedMapComponent>(map);
@@ -135,11 +137,12 @@ public sealed class LavalandWeatherSystem : EntitySystem
         if (!TryComp<LavalandStormedMapComponent>(map, out var comp))
             return;
 
-        // Den edit for sirens
-        _audio.PlayGlobal(proto.StormSirenEnd, Filter.Local(), true);
-
         var popup = _proto.Index(comp.CurrentWeather).PopupEndMessage;
         RemComp<LavalandStormedMapComponent>(map);
+
+		// Den edit for sirens
+		var mapId = Transform(map).MapID;
+        _audio.PlayGlobal(proto.StormSirenEndSound, Filter.BroadcastMap(mapId), true);
 
         var humans = EntityQueryEnumerator<HumanoidAppearanceComponent, DamageableComponent>();
         while (humans.MoveNext(out var human, out _, out _))

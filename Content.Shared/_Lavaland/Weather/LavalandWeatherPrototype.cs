@@ -33,13 +33,13 @@ public sealed class LavalandWeatherPrototype : IPrototype
 
     // Den addition for siren sounds
     [DataField]
-    public SoundSpecifier StormSirenEarly = new SoundPathSpecifier("/Audio/_Lavaland/DenSiren/storm_warning_early.wav");
+    public SoundSpecifier StormSirenEarlySound = new SoundPathSpecifier("/Audio/_Lavaland/DenSiren/storm_warning_early.ogg");
 
     [DataField]
-    public SoundSpecifier StormSirenStart = new SoundPathSpecifier("/Audio/_Lavaland/DenSiren/storm_warning_start.wav");
+    public SoundSpecifier StormSirenStartSound = new SoundPathSpecifier("/Audio/_Lavaland/DenSiren/storm_warning_start.ogg");
 
     [DataField]
-    public SoundSpecifier StormSirenEnd = new SoundPathSpecifier("/Audio/_Lavaland/DenSiren/storm_warning_end.wav");
+    public SoundSpecifier StormSirenEndSound = new SoundPathSpecifier("/Audio/_Lavaland/DenSiren/storm_warning_end.ogg");
     // End Den edit
 
     /// <summary>
