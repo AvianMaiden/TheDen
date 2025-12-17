@@ -141,8 +141,8 @@ public sealed class LavalandWeatherSystem : EntitySystem
         RemComp<LavalandStormedMapComponent>(map);
 
 		// Den edit for sirens
-		var mapId = Transform(map).MapID;
-        _audio.PlayGlobal(proto.StormSirenEndSound, Filter.BroadcastMap(mapId), true);
+		//var mapId = Transform(map).MapID;
+        //_audio.PlayGlobal(proto.StormSirenEndSound, Filter.BroadcastMap(mapId), true);
 
         var humans = EntityQueryEnumerator<HumanoidAppearanceComponent, DamageableComponent>();
         while (humans.MoveNext(out var human, out _, out _))
