@@ -109,10 +109,6 @@ public sealed class LavalandWeatherSystem : EntitySystem
 
         var proto = _proto.Index(weather);
 
-		// Den edit for sirens
-		var mapId = Transform(map).MapID;
-        _audio.PlayGlobal(proto.StormSirenStartSound, Filter.BroadcastMap(mapId), true);
-
         _weather.SetWeather(Transform(map).MapID, _proto.Index(proto.WeatherType), null);
 
         Log.Debug($"Starting dealing weather damage on lavaland map {ToPrettyString(map)}");
@@ -129,6 +125,9 @@ public sealed class LavalandWeatherSystem : EntitySystem
 
             _popup.PopupEntity(proto.PopupStartMessage, human, human, PopupType.LargeCaution);
         }
+		// Den edit for sirens
+		var mapId = Transform(map).MapID;
+        _audio.PlayGlobal(proto.StormSirenStartSound, Filter.BroadcastMap(mapId), true);
     }
 
     public void EndWeather(Entity<LavalandMapComponent> map)
@@ -141,8 +140,9 @@ public sealed class LavalandWeatherSystem : EntitySystem
         RemComp<LavalandStormedMapComponent>(map);
 
 		// Den edit for sirens
-		//var mapId = Transform(map).MapID;
-        //_audio.PlayGlobal(proto.StormSirenEndSound, Filter.BroadcastMap(mapId), true);
+		var proto = _proto.Index(comp.CurrentWeather);
+		var mapId = Transform(map).MapID;
+        _audio.PlayGlobal(proto.StormSirenEndSound, Filter.BroadcastMap(mapId), true);
 
         var humans = EntityQueryEnumerator<HumanoidAppearanceComponent, DamageableComponent>();
         while (humans.MoveNext(out var human, out _, out _))
