@@ -36,7 +36,7 @@ public sealed class LavalandWeatherPrototype : IPrototype
     public SoundSpecifier StormSirenEarlySound = new SoundPathSpecifier("/Audio/_Lavaland/DenSiren/storm_warning_early.ogg");
 
     [DataField]
-    public SoundSpecifier StormSirenStartSound = new SoundPathSpecifier("/Audio/_Lavaland/DenSiren/storm_warning_start.ogg");
+    public SoundSpecifier StormSirenStartSound = new SoundPathSpecifier("/Audio/_Lavaland/DenSiren/1000Tstorm_warning_start.ogg");
 
     [DataField]
     public SoundSpecifier StormSirenEndSound = new SoundPathSpecifier("/Audio/_Lavaland/DenSiren/storm_warning_end.ogg");

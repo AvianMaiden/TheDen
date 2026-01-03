@@ -13,6 +13,7 @@ using Content.Shared._Lavaland.Weather;
 using Content.Shared.Damage;
 using Content.Shared.Humanoid;
 using Content.Shared.Popups;
+using Robust.Shared.Asynchronous;
 using Robust.Shared.Audio;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.CPUJob.JobQueues;
@@ -32,6 +33,7 @@ public sealed class LavalandWeatherSystem : EntitySystem
     [Dependency] private readonly TemperatureSystem _temperature = default!;
     [Dependency] private readonly DamageableSystem _damage = default!;
     [Dependency] private readonly SharedAudioSystem _audio = default!;
+    [Dependency] private readonly ITaskManager _taskManager = default!;
 
     private const double LavalandWeatherJobTime = 0.005;
     private readonly JobQueue _lavalandWeatherJobQueue = new(LavalandWeatherJobTime);
@@ -109,6 +111,14 @@ public sealed class LavalandWeatherSystem : EntitySystem
 
         var proto = _proto.Index(weather);
 
+        // Den edit for sirens
+        var mapId = Transform(map).MapID;
+        _audio.PlayGlobal(proto.StormSirenEarlySound, Filter.BroadcastMap(mapId), true);
+
+        _taskManager.RunOnMainThread(async() => {
+            await Task.Delay(30 * 1000);
+        // End Den edit; plays 30 seconds before event
+
         _weather.SetWeather(Transform(map).MapID, _proto.Index(proto.WeatherType), null);
 
         Log.Debug($"Starting dealing weather damage on lavaland map {ToPrettyString(map)}");
@@ -126,8 +136,8 @@ public sealed class LavalandWeatherSystem : EntitySystem
             _popup.PopupEntity(proto.PopupStartMessage, human, human, PopupType.LargeCaution);
         }
 		// Den edit for sirens
-		var mapId = Transform(map).MapID;
         _audio.PlayGlobal(proto.StormSirenStartSound, Filter.BroadcastMap(mapId), true);
+        });
     }
 
     public void EndWeather(Entity<LavalandMapComponent> map)
@@ -139,11 +149,6 @@ public sealed class LavalandWeatherSystem : EntitySystem
         var popup = _proto.Index(comp.CurrentWeather).PopupEndMessage;
         RemComp<LavalandStormedMapComponent>(map);
 
-		// Den edit for sirens
-		var proto = _proto.Index(comp.CurrentWeather);
-		var mapId = Transform(map).MapID;
-        _audio.PlayGlobal(proto.StormSirenEndSound, Filter.BroadcastMap(mapId), true);
-
         var humans = EntityQueryEnumerator<HumanoidAppearanceComponent, DamageableComponent>();
         while (humans.MoveNext(out var human, out _, out _))
         {
@@ -153,5 +158,9 @@ public sealed class LavalandWeatherSystem : EntitySystem
 
             _popup.PopupEntity(popup, human, human, PopupType.Large);
         }
+        // Den edit for sirens
+        var proto = _proto.Index(comp.CurrentWeather);
+        var mapId = Transform(map).MapID;
+        _audio.PlayGlobal(proto.StormSirenEndSound, Filter.BroadcastMap(mapId), true);
     }
 }
